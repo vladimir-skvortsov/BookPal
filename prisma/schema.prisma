@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["orderByRelation"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reviews   Review[]
+  books     Book[]
+}
+
+model Genre {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  books     Book[]
+}
+
+model Author {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  books     Book[]
+}
+
+model Book {
+  id        String   @id @default(uuid())
+  slug String @unique
+  cover String?
+  title     String
+  description String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reviews   Review[]
+  authors   Author[]
+  genres    Genre[]
+  users     User[]
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  userId    String
+  bookId    String
+  text      String
+  rating    Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  book      Book     @relation(fields: [bookId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
